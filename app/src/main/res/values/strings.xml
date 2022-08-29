@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">To-Do Compose</string>
+    <string name="list_screen_add_button_content_description">Add button</string>
+    <string name="list_app_bar_default_title">Tasks</string>
+    <string name="list_app_bar_search_content_description">Search Tasks</string>
+    <string name="list_app_bar_sort_content_description">Sort Tasks</string>
+    <string name="list_app_bar_delete_all_content_description">Delete All Tasks</string>
+    <string name="list_app_bar_search">Search</string>
+    <string name="list_app_bar_search_icon_content_description">Search Icon</string>
+    <string name="list_app_bar_close_content_description">Close</string>
+    <string name="empty_tasks_content_label">No tasks found</string>
+</resources>
