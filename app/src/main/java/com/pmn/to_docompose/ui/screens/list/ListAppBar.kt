@@ -1,4 +1,4 @@
-package com.pmn.to_docompose.ui.screens
+package com.pmn.to_docompose.ui.screens.list
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -138,18 +138,18 @@ fun SortAction(
             DropdownMenuItem(
                 onClick = {
                     expanded = false
-                    onSortClick(Priority.LOW)
+                    onSortClick(Priority.MEDIUM)
                 }
             ) {
-                PriorityItem(priority = Priority.HIGH)
+                PriorityItem(priority = Priority.MEDIUM)
             }
             DropdownMenuItem(
                 onClick = {
                     expanded = false
-                    onSortClick(Priority.NONE)
+                    onSortClick(Priority.HIGH)
                 }
             ) {
-                PriorityItem(priority = Priority.NONE)
+                PriorityItem(priority = Priority.HIGH)
             }
         }
     }

@@ -9,4 +9,15 @@
     <string name="list_app_bar_search_icon_content_description">Search Icon</string>
     <string name="list_app_bar_close_content_description">Close</string>
     <string name="empty_tasks_content_label">No tasks found</string>
+    <string name="task_app_bar_add_task_button">Add Task</string>
+    <string name="back_content_description">Back</string>
+    <string name="close_label">Close</string>
+    <string name="delete_label">Delete</string>
+    <string name="update_label">Update</string>
+    <string name="drop_down_content_description">Drop-Down Icon</string>
+    <string name="title_label">Title</string>
+    <string name="description_label">Description</string>
+    <string name="empty_fields_message">Fields Empty</string>
+    <string name="confirm_button">Ok</string>
+    <string name="undo_button">UNDO</string>
 </resources>

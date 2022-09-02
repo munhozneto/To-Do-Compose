@@ -118,17 +118,3 @@ fun TaskItem(
         }
     }
 }
-
-@ExperimentalMaterialApi
-@Composable
-@Preview
-fun TaskItemPreview() {
-    TaskItem(
-        toDoTask = ToDoTask(
-            id = 0,
-            title = "Title",
-            description = "Some random text",
-            priority = Priority.HIGH
-        ), navigateToTaskScreen = {}
-    )
-}

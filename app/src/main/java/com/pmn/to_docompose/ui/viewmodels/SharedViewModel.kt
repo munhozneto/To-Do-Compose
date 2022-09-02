@@ -4,11 +4,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.pmn.to_docompose.data.models.Priority
 import com.pmn.to_docompose.data.models.ToDoTask
 import com.pmn.to_docompose.data.repositories.ToDoRepository
+import com.pmn.to_docompose.util.Action
 import com.pmn.to_docompose.util.RequestState
 import com.pmn.to_docompose.util.SearchAppBarState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,6 +21,13 @@ import javax.inject.Inject
 class SharedViewModel @Inject constructor(
     private val repository: ToDoRepository
 ) : ViewModel() {
+
+    val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
+
+    private val id: MutableState<Int> = mutableStateOf(0)
+    val title: MutableState<String> = mutableStateOf("")
+    val description: MutableState<String> = mutableStateOf("")
+    val priority: MutableState<Priority> = mutableStateOf(Priority.LOW)
 
     val searchAppBarState: MutableState<SearchAppBarState> =
         mutableStateOf(SearchAppBarState.CLOSED)
@@ -39,5 +49,108 @@ class SharedViewModel @Inject constructor(
             _allTasks.value = RequestState.Error(exception)
         }
 
+    }
+
+    private val _selectedTask: MutableStateFlow<ToDoTask?> = MutableStateFlow(null)
+    val selectedTask: StateFlow<ToDoTask?> = _selectedTask
+
+    fun getSelectedTasks(taskId: Int) {
+        viewModelScope.launch {
+            repository.getSelectedTask(taskId).collect { task ->
+                _selectedTask.value = task
+            }
+        }
+    }
+
+    private fun addTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val toDoTask = ToDoTask(
+                title = title.value.trimEnd(),
+                description = description.value.trimEnd(),
+                priority = priority.value
+            )
+            repository.addTask(toDoTask = toDoTask)
+        }
+    }
+
+    private fun updateTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val toDoTask = ToDoTask(
+                id = id.value,
+                title = title.value.trimEnd(),
+                description = description.value.trimEnd(),
+                priority = priority.value
+            )
+            repository.updateTask(toDoTask =toDoTask)
+        }
+    }
+
+    private fun deleteTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val toDoTask = ToDoTask(
+                id = id.value,
+                title = title.value.trimEnd(),
+                description = description.value.trimEnd(),
+                priority = priority.value
+            )
+            repository.deleteTask(toDoTask = toDoTask)
+        }
+    }
+
+    private fun deleteAllTask() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAllTask()
+        }
+    }
+
+    fun handleDatabaseActions(action: Action) {
+        when (action) {
+            Action.ADD -> {
+                addTask()
+            }
+            Action.UPDATE -> {
+                updateTask()
+            }
+            Action.DELETE -> {
+                deleteTask()
+            }
+            Action.DELETE_ALL -> {
+                deleteAllTask()
+            }
+            Action.UNDO -> {
+                addTask()
+            }
+            else -> {
+
+            }
+        }
+    }
+
+    fun updateTaskFields(selectedTask: ToDoTask?) {
+        selectedTask?.let {
+            id.value = selectedTask.id
+            title.value = selectedTask.title
+            description.value = selectedTask.description
+            priority.value = selectedTask.priority
+        } ?: run {
+            id.value = 0
+            title.value = ""
+            description.value = ""
+            priority.value = Priority.LOW
+        }
+    }
+
+    fun updateTitle(newTitle: String) {
+        if (newTitle.length < MAX_TITLE_LENGTH) {
+            title.value = newTitle
+        }
+    }
+
+    fun validateFields(): Boolean {
+        return title.value.isNotEmpty() && description.value.isNotEmpty()
+    }
+
+    companion object {
+        private const val MAX_TITLE_LENGTH = 20
     }
 }
