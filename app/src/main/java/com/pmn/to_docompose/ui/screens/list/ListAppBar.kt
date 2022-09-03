@@ -18,10 +18,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import com.pmn.to_docompose.R
+import com.pmn.to_docompose.components.DisplayAlertDialog
 import com.pmn.to_docompose.components.PriorityItem
 import com.pmn.to_docompose.data.models.Priority
 import com.pmn.to_docompose.ui.theme.*
 import com.pmn.to_docompose.ui.viewmodels.SharedViewModel
+import com.pmn.to_docompose.util.Action
 import com.pmn.to_docompose.util.SearchAppBarState
 import com.pmn.to_docompose.util.TrailingIconState
 
@@ -40,8 +42,8 @@ fun ListAppBar(
                 onSortClick = {
 
                 },
-                onDeleteClick = {
-
+                onDeleteAllConfirmClick = {
+                    sharedViewModel.handleDatabaseActions(Action.DELETE_ALL)
                 }
             )
         }
@@ -56,7 +58,7 @@ fun ListAppBar(
                     sharedViewModel.searchTextState.value = ""
                 },
                 onSearchClick = {
-
+                    sharedViewModel.searchTasks(searchQuery = it)
                 }
             )
         }
@@ -67,7 +69,7 @@ fun ListAppBar(
 fun DefaultListAppBar(
     onSearchClick: () -> Unit,
     onSortClick: (Priority) -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteAllConfirmClick: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -80,7 +82,7 @@ fun DefaultListAppBar(
             ListAppBarActions(
                 onSearchClick = onSearchClick,
                 onSortClick = onSortClick,
-                onDeleteClick = onDeleteClick
+                onDeleteAllConfirmClick = onDeleteAllConfirmClick
             )
         },
         backgroundColor = MaterialTheme.colors.topAppBarBackgroundColor
@@ -91,11 +93,28 @@ fun DefaultListAppBar(
 fun ListAppBarActions(
     onSearchClick: () -> Unit,
     onSortClick: (Priority) -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteAllConfirmClick: () -> Unit
 ) {
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
+
+    DisplayAlertDialog(
+        title = stringResource(id = R.string.delete_all_tasks_title),
+        message = stringResource(id = R.string.delete_all_tasks_message),
+        openDialog = openDialog,
+        closeDialogClick = {
+            openDialog = false
+        },
+        onConfirmClick = {
+            onDeleteAllConfirmClick()        }
+    )
+
     SearchAction(onSearchClick = onSearchClick)
     SortAction(onSortClick = onSortClick)
-    DeleteAllAction(onDeleteClick = onDeleteClick)
+    DeleteAllAction(onDeleteClick = {
+        openDialog = true
+    })
 }
 
 @Composable

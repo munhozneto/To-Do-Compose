@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.pmn.to_docompose.R
-import com.pmn.to_docompose.ui.screens.ListContent
 import com.pmn.to_docompose.ui.theme.fabBackgroundColor
 import com.pmn.to_docompose.ui.viewmodels.SharedViewModel
 import com.pmn.to_docompose.util.Action
@@ -29,7 +28,8 @@ fun ListScreen(
         sharedViewModel.getAllTasks()
     }
 
-    val allTasks by sharedViewModel.allTasks.collectAsState()
+    val tasksState by sharedViewModel.allTasks.collectAsState()
+    val searchedTasksState by sharedViewModel.searchedTasks.collectAsState()
     val searchAppBarState: SearchAppBarState by sharedViewModel.searchAppBarState
     val searchTextState: String by sharedViewModel.searchTextState
     val scaffoldState = rememberScaffoldState()
@@ -41,7 +41,7 @@ fun ListScreen(
         taskTitle = sharedViewModel.title.value,
         action = action
     )
-    
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -57,7 +57,9 @@ fun ListScreen(
     ) { contentPadding ->
         Box(modifier = Modifier.padding(contentPadding)) {
             ListContent(
-                tasks = allTasks,
+                tasksState = tasksState,
+                searchedTasksState = searchedTasksState,
+                searchAppBarState = searchAppBarState,
                 navigateToTaskScreen = navigateToTaskScreen
             )
         }
@@ -99,14 +101,18 @@ fun DisplaySnackBar(
             handleDatabaseActions()
 
             scope.launch {
-                 val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
-                     message = "${action.name}: $taskTitle",
-                     actionLabel = if (action == Action.DELETE) {
-                         context.resources.getString(R.string.undo_button)
-                     } else {
-                         context.resources.getString(R.string.confirm_button)
-                     }
-                 )
+                val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
+                    message = if (action == Action.DELETE) {
+                        context.getString(R.string.remove_all_tasks_message)
+                    } else {
+                        "${action.name}: $taskTitle"
+                    },
+                    actionLabel = if (action == Action.DELETE) {
+                        context.resources.getString(R.string.undo_button)
+                    } else {
+                        context.resources.getString(R.string.confirm_button)
+                    }
+                )
                 undoDeletedTask(
                     action = action,
                     snackBarResult = snackBarResult

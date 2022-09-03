@@ -20,4 +20,11 @@
     <string name="empty_fields_message">Fields Empty</string>
     <string name="confirm_button">Ok</string>
     <string name="undo_button">UNDO</string>
+    <string name="remove_all_tasks_message">All tasks Removed</string>
+    <string name="yes_label">Yes</string>
+    <string name="no_label">No</string>
+    <string name="delete_task_title">Remove %1$s? task</string>
+    <string name="delete_task_message">Are you sure you want to remove %1$s task?</string>
+    <string name="delete_all_tasks_title">Remove all tasks?</string>
+    <string name="delete_all_tasks_message">Are you sure you want to remove all task?</string>
 </resources>

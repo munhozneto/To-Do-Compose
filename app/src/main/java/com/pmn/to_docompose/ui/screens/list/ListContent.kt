@@ -1,4 +1,4 @@
-package com.pmn.to_docompose.ui.screens
+package com.pmn.to_docompose.ui.screens.list
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
@@ -14,28 +14,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.pmn.to_docompose.data.models.Priority
 import com.pmn.to_docompose.data.models.ToDoTask
+import com.pmn.to_docompose.ui.screens.EmptyContent
 import com.pmn.to_docompose.ui.theme.LARGE_PADDING
 import com.pmn.to_docompose.ui.theme.PRIORITY_INDICATOR_SIZE
 import com.pmn.to_docompose.ui.theme.taskItemBackgroundColor
 import com.pmn.to_docompose.ui.theme.taskItemTextColor
 import com.pmn.to_docompose.util.RequestState
+import com.pmn.to_docompose.util.SearchAppBarState
 
 @ExperimentalMaterialApi
 @Composable
 fun ListContent(
-    tasks: RequestState<List<ToDoTask>>,
+    tasksState: RequestState<List<ToDoTask>>,
+    searchedTasksState: RequestState<List<ToDoTask>>,
+    searchAppBarState: SearchAppBarState,
     navigateToTaskScreen: (taskId: Int) -> Unit
 ) {
-    if (tasks is RequestState.Success) {
-        if (tasks.data.isEmpty()) {
-            EmptyContent()
-        } else {
-            DisplayTasks(tasks = tasks.data, navigateToTaskScreen = navigateToTaskScreen)
+    if (searchAppBarState == SearchAppBarState.TRIGGERED) {
+        if (searchedTasksState is RequestState.Success) {
+            HandleListContent(
+                tasks = searchedTasksState.data,
+                navigateToTaskScreen = navigateToTaskScreen
+            )
         }
+    } else {
+        if (tasksState is RequestState.Success) {
+            HandleListContent(tasks = tasksState.data, navigateToTaskScreen = navigateToTaskScreen)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun HandleListContent(
+    tasks: List<ToDoTask>,
+    navigateToTaskScreen: (taskId: Int) -> Unit
+) {
+    if (tasks.isEmpty()) {
+        EmptyContent()
+    } else {
+        DisplayTasks(tasks = tasks, navigateToTaskScreen = navigateToTaskScreen)
     }
 }
 
