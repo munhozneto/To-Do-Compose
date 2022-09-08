@@ -26,12 +26,18 @@ fun ListScreen(
 ) {
     LaunchedEffect(key1 = true) {
         sharedViewModel.getAllTasks()
+        sharedViewModel.readSortState()
     }
 
     val tasksState by sharedViewModel.allTasks.collectAsState()
     val searchedTasksState by sharedViewModel.searchedTasks.collectAsState()
+    val sortState by sharedViewModel.sortState.collectAsState()
+    val lowPriorityState by sharedViewModel.lowPriorityTasks.collectAsState()
+    val highPriorityState by sharedViewModel.highPriorityTasks.collectAsState()
+
     val searchAppBarState: SearchAppBarState by sharedViewModel.searchAppBarState
     val searchTextState: String by sharedViewModel.searchTextState
+
     val scaffoldState = rememberScaffoldState()
 
     DisplaySnackBar(
@@ -60,6 +66,13 @@ fun ListScreen(
                 tasksState = tasksState,
                 searchedTasksState = searchedTasksState,
                 searchAppBarState = searchAppBarState,
+                sortState = sortState,
+                lowPriorityTasks = lowPriorityState,
+                highPriorityTasks = highPriorityState,
+                onSwipeToDelete = { action, task ->
+                    sharedViewModel.handleDatabaseActions(action)
+                    sharedViewModel.updateTaskFields(selectedTask = task)
+                },
                 navigateToTaskScreen = navigateToTaskScreen
             )
         }

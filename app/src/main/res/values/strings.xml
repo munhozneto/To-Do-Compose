@@ -27,4 +27,5 @@
     <string name="delete_task_message">Are you sure you want to remove %1$s task?</string>
     <string name="delete_all_tasks_title">Remove all tasks?</string>
     <string name="delete_all_tasks_message">Are you sure you want to remove all task?</string>
+    <string name="splash_image_logo">ToDo logo</string>
 </resources>
